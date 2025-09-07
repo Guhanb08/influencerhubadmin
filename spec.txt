@@ -1,0 +1,183 @@
+📱 AskRaghulan App – Phase-1 Specification
+1. Scope (Phase-1)
+
+Admin App
+
+Post YouTube video links (CRUD).
+
+Mark video as pinned / publish / archive.
+
+Toggle “notify on publish”.
+
+CRUD Quote of the Day (schedule go-live, mark active, toggle notify).
+
+CRUD Social Links (Instagram, X, YouTube, custom).
+
+Trigger push notifications when:
+
+A video is published (notifyOnPublish=true).
+
+A quote goes live (notifyOnGoLive=true).
+
+Mobile App (end-user)
+
+No login required.
+
+Fetch and display:
+
+Most recent or pinned video.
+
+Quote of the day.
+
+Social media links.
+
+Register device for push notifications.
+
+Receive push on video publish / quote go-live.
+
+2. Data Model (Drizzle schema already shared)
+✅ Video
+
+id, youtubeUrl, title, publishedAt
+
+status: video_status (draft | published | archived)
+
+isPinned, notifyOnPublish
+
+Timestamps
+
+✅ Quote
+
+id, text, author
+
+goLiveAt, isActive, notifyOnGoLive
+
+Timestamps
+
+✅ SocialLink
+
+id, platform (free text), label, url
+
+3. APIs
+Public Read (for mobile)
+
+GET /v1/home → returns most recent video, active quote, social links.
+
+GET /v1/videos?limit=20&cursor=... → paginated published videos.
+
+GET /v1/quote/today → active quote.
+
+Device Registration
+
+POST /v1/device/register → upsert { platform, pushToken, locale }.
+
+4. Admin Flows
+Videos
+
+Add/Edit: enter YouTube URL → preview title → save.
+
+Publish: status=published → optional push if notifyOnPublish=true.
+
+Pin/Unpin: reorder homepage priority.
+
+Archive: hide from app.
+
+Quotes
+
+Create: enter text + optional author.
+
+Schedule: set goLiveAt or mark active immediately.
+
+Notify: push if notifyOnGoLive=true.
+
+Social Links
+
+Manage platform name (Instagram/X/YouTube/custom).
+
+Add label + URL.
+
+5. Notifications
+
+Trigger points:
+
+Video published → push: New Video: {title}.
+
+Quote goes live → push: Quote of the Day.
+
+Pipeline:
+
+Devices register push tokens.
+
+Admin publish / cron scheduler → batch send via FCM.
+
+Log events in notification_log.
+
+6. Mobile UX
+
+Home Screen:
+
+Profile card (name + video count).
+
+Quote of the Day.
+
+Most Recent / Pinned Video (YouTube thumbnail auto).
+
+Social links row with icons → external browser.
+
+Push Notifications:
+
+Tap video push → deep link to video card.
+
+Tap quote push → opens app home, scrolls to quote.
+
+7. Tech Stack
+
+Admin App: Next.js (with shadcn/ui) or Nuxt (if Vue-first).
+
+Backend: Supabase (Postgres, Edge Functions, FCM integration).
+
+Mobile App: React Native (Expo).
+
+Push: Firebase Cloud Messaging (FCM).
+
+8. Phase-1 Deliverables
+
+✅ Admin web app (video/quote/social CRUD).
+
+✅ DB migrations (video, quote, social_link, device, notification_log).
+
+✅ REST endpoints (/v1/home, /v1/device/register).
+
+✅ Push notification integration.
+
+✅ Mobile app consuming /v1/home.
+
+9. Out of Scope (Phase-1)
+
+No YouTube API sync (manual link only).
+
+No login/registration for users.
+
+No analytics (click tracking, view counts).
+
+No e-commerce cards (sales/products) or projects section.
+
+10. Success Criteria
+
+Admin can:
+
+Post a YouTube link, mark publish → app users receive push.
+
+Create a quote, set go-live → app shows it automatically.
+
+Update social links → instantly visible in mobile.
+
+Mobile user sees:
+
+Correct most recent/pinned video.
+
+Quote of the Day.
+
+Social links with working redirects.
+
+Push notifications received within seconds.
