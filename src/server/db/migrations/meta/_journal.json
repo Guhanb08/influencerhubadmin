@@ -15,6 +15,13 @@
       "when": 1757262046915,
       "tag": "0001_busy_jocasta",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757262564584,
+      "tag": "0002_romantic_oracle",
+      "breakpoints": true
     }
   ]
 }
